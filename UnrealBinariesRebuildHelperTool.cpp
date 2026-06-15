@@ -35,7 +35,11 @@ const char* folders2remove[3] = {"Binaries", "Intermediate", "Saved"};
 
 #endif // _WIN32
 
-
+/// <summary>
+/// Checks if the c-style string is emty
+/// </summary>
+/// <param name="str"></param>
+/// <returns>true - str is empty, false - str is not empty</returns>
 bool CheckEmpty(const char* str)
 {
     if (str == nullptr || strlen(str) == 0 || *str == '\0')
@@ -43,6 +47,11 @@ bool CheckEmpty(const char* str)
     return false;
 }
 
+/// <summary>
+/// Checks if the c-style string is emty and prints custom error msg
+/// </summary>
+/// <param name="str"></param>
+/// <returns>true - str is empty, false - str is not empty</returns>
 bool CheckEmpty(const char* str, const char* error)
 {
     if (str == nullptr || strlen(str) == 0 || *str == '\0')
@@ -53,6 +62,10 @@ bool CheckEmpty(const char* str, const char* error)
     return false;
 }
 
+/// <summary>
+/// Print header
+/// </summary>
+/// <param name="header"></param>
 void PrintHeader(const char* header)
 {
     using namespace std;
@@ -88,6 +101,10 @@ void ExecCommand(const char* command)
     system(command);
 }
 
+/// <summary>
+/// Get path to the current executing *.exe file
+/// </summary>
+/// <param name="path">out path to *.exe</param>
 void GetCurrentEXEDirectory(char* path)
 {
 #ifdef _WIN32
@@ -111,6 +128,11 @@ void GetCurrentEXEDirectory(char* path)
 
 }
 
+/// <summary>
+/// Cuts off *.exe file name
+/// </summary>
+/// <param name="path2Exe"></param>
+/// <param name="path2Folder"></param>
 void GetPath2Folder(const char* path2Exe, char* path2Folder)
 {
     if (path2Exe == nullptr || path2Folder == nullptr) return;
@@ -130,6 +152,12 @@ void GetPath2Folder(const char* path2Exe, char* path2Folder)
     }
 }
 
+/// <summary>
+/// Reads input from the console
+/// </summary>
+/// <param name="msg">Prompt msg to show</param>
+/// <param name="out">Buffer to store the results</param>
+/// <param name="outSize">Size of the buffer</param>
 void InputStr(const char* msg, char* out, int outSize)
 {
     if (out == nullptr || outSize <= 0) return;
@@ -150,6 +178,12 @@ void InputStr(const char* msg, char* out, int outSize)
     } while (true);
 }
 
+/// <summary>
+/// Gets the env Variable according to its name
+/// </summary>
+/// <param name="varName">Name of the Env Var</param>
+/// <param name="out">Buffer to store the results</param>
+/// <param name="outSize">Size of Buffer</param>
 void GetEnvVar(const char* varName, char* out, size_t outSize)
 {
     if (CheckEmpty(varName))
@@ -167,10 +201,10 @@ void GetEnvVar(const char* varName, char* out, size_t outSize)
     if (_dupenv_s(&buf, &sz, varName) == 0 && buf != nullptr)
     {
         strcpy_s(out, outSize, buf);
-        free(buf);
+        free(buf);//Use it cause _dupenv_s allocates memory using malloc
     }
     else
-    {
+    {  
         out[0] = '\0';//Empty string
     }
     
@@ -179,8 +213,8 @@ void GetEnvVar(const char* varName, char* out, size_t outSize)
     const char* envVal = std::getenv(varName);
     if (envVal != nullptr)
     {
-        std::strncpy(out, envVal, outSize - 1);
-        out[outSize - 1] = '\0'; // Гарантируем ноль-терминатор в конце
+        std::strncpy(out, envVal, outSize - 1);//No null terminator at the end of the string
+        out[outSize - 1] = '\0'; //Null terminator at the end
     }
     else
     {
@@ -190,6 +224,11 @@ void GetEnvVar(const char* varName, char* out, size_t outSize)
 #endif // _WIN32
 }
 
+/// <summary>
+/// Sets all the characters in the string to 0
+/// </summary>
+/// <param name="str"></param>
+/// <param name="size"></param>
 void ClearString(char* str, size_t size)
 {
     if (size == 0) return;
@@ -261,6 +300,7 @@ int main()
 #elif __linux__
         snprintf(commandBuffer, sizeof(commandBuffer), "%s \"%s\"", "rm -rf", pathForDeletion);
 #endif //_WIN32
+        printf("[Info] Deleting %s", folders2remove[i]);
         ExecCommand(commandBuffer);
         ClearString(commandBuffer, sizeof(commandBuffer));
         ClearString(pathForDeletion, sizeof(pathForDeletion));
