@@ -300,7 +300,7 @@ int main()
 #elif __linux__
         snprintf(commandBuffer, sizeof(commandBuffer), "%s \"%s\"", "rm -rf", pathForDeletion);
 #endif //_WIN32
-        printf("\t[Info] Deleting %s\n", folders2remove[i]);
+        printf("[Info] Deleting % s\n", folders2remove[i]);
         ExecCommand(commandBuffer);
         ClearString(commandBuffer, sizeof(commandBuffer));
         ClearString(pathForDeletion, sizeof(pathForDeletion));
